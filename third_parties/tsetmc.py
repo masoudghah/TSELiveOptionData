@@ -49,8 +49,6 @@ def get_option_data(market: Literal["bours", "fara_bours"]) -> List[dict]:
         response.raise_for_status()
         json_response = response.json()
         data = json_response.get('instrumentOptMarketWatch', [])
-        if not isinstance(data, list):
-            raise ValueError("Invalid response format. Expected a list of dictionaries.")
         return data
     except (requests.RequestException, ValueError) as e:
         print(f"An error occurred while fetching option data: {e}")
