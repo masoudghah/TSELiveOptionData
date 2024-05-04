@@ -3,7 +3,7 @@ This repository contains code for fetching and processing live option data from 
 
 ----
 ## TSETMC Source
-The primary function in` third_parties/tsetmc.py` is `get_cleaned_options_data`, which fetches option data from the TSETMC API and preprocesses it for further analysis. An example of the output from this source can be found in `data.csv`.
+The primary function in`third_parties/tsetmc.py` is `get_cleaned_options_data`, which fetches option data from the TSETMC API and preprocesses it for further analysis. An example of the output from this source can be found in `data.csv`.
 
 
 
@@ -14,10 +14,10 @@ It showcases how to create an instance of the `OptionMarket` class, analyze opti
 ---
 
 ## Tadbir Source
-The Tadbir source provides low latency and more detailed data related to the TSETMC API. If the TSETMC API is suitable for screening the total market, then Tadbir may be suitable for obtaining data for actual trading. The Tadbir source offers two endpoints:
+The Tadbir source (`third_parties/tadbirOMS.py`) provides low latency and more detailed data related to the TSETMC API. If the TSETMC API is suitable for screening the total market, then Tadbir may be suitable for obtaining data for actual trading. The Tadbir source offers two endpoints:
 
-1. For retrieving data in bulk (refer to the example output in `tadbir_bulk_data_sample.csv`).
-2. For obtaining specific symbol information (such as initial margin) and its order book (refer to the example output in `tadbir_detail_data_sample.json`).
+1. `third_parties.tadbirOMS.tadbir_api.get_last_bulk_data()` For retrieving data in bulk (refer to the example output in `tadbir_bulk_data_sample.csv`).
+2. `third_parties.tadbirOMS.tadbir_api.get_detail_data()` For obtaining specific symbol information (such as initial margin) and its order book (refer to the example output in `tadbir_detail_data_sample.json`).
 
 ## Note
 * The code utilizes APIs to fetch live option data. Ensure you have a stable internet connection.
