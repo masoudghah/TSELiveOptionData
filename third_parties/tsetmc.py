@@ -3,6 +3,10 @@ from typing import List, Literal
 import pandas as pd
 import requests
 
+import asyncio
+import aiohttp
+import time
+
 general_columns_name = {
     "uaInsCode": "ua_tse_code",
     "lval30_UA": "ua_ticker",
@@ -34,7 +38,7 @@ specific_columns_name = {
 }
 
 
-def get_option_data(market: Literal["bours", "fara_bours"]) -> List[dict]:
+async def get_option_data(market: Literal["bours", "fara_bours"]) -> List[dict]:
     if market not in ["bours", "fara_bours"]:
         raise ValueError("Invalid market value. Expected 'bours' or 'fara_bours'.")
 
@@ -43,28 +47,36 @@ def get_option_data(market: Literal["bours", "fara_bours"]) -> List[dict]:
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36 Edg/95.0.1020.53'
     }
     url = f"https://cdn.tsetmc.com/api/Instrument/GetInstrumentOptionMarketWatch/{market_num}"
+    start_time = time.time()
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(url, headers=headers) as response:
+                response.raise_for_status()
+                json_response = await response.json()
+                data = json_response.get('instrumentOptMarketWatch', [])
+                eta = time.time() - start_time
+                print(f"eta for {market}: {eta}")
+                return data
+        except (requests.RequestException, ValueError) as e:
+            print(f"An error occurred while fetching option data: {e}")
+            return []
 
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        json_response = response.json()
-        data = json_response.get('instrumentOptMarketWatch', [])
-        return data
-    except (requests.RequestException, ValueError) as e:
-        print(f"An error occurred while fetching option data: {e}")
-        return []
 
-
-def get_total_option_data() -> List[dict]:
-    bours = get_option_data("bours")
-    fara_bours = get_option_data("fara_bours")
+async def get_total_option_data() -> List[dict]:
+    start_time = time.time()
+    result = await asyncio.gather(
+        get_option_data("bours"),
+        get_option_data("fara_bours")
+    )
+    bours, fara_bours = result
     total = bours + fara_bours
+    eta = time.time() - start_time
+    print(f"eta for total: {eta}")
     return total
 
 
 def clean_total_option_data(raw_data: List[dict]) -> pd.DataFrame:
     df = pd.DataFrame(raw_data)
-
     general_columns = [column for column in df.columns if (not column.endswith("_P")) and (not column.endswith("_C"))]
     specific_columns = [column.replace("_C", "") for column in df.columns if column.endswith("_C")]
 
@@ -85,12 +97,11 @@ def clean_total_option_data(raw_data: List[dict]) -> pd.DataFrame:
 
 
 def get_cleaned_options_data() -> pd.DataFrame:
-    raw_data = get_total_option_data()
-    df = clean_total_option_data(raw_data)
-    return df
+    raw_data = asyncio.run(get_total_option_data())
+    clean_df = clean_total_option_data(raw_data)
+    return clean_df
 
 
 if __name__ == "__main__":
-    df = get_cleaned_options_data()
-    print(df)
-
+    clean_data = get_cleaned_options_data()
+    print(clean_data)
