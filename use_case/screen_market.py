@@ -40,24 +40,7 @@ class OptionMarket:
         return data.sort_values("total", ascending=False).head(5).to_dict("records")
 
 
-if __name__ == "__main__":
-    from data_source.tsetmc.api import fetch_cleaned_entire_market_data
-    from pprint import pprint
+def convert_to_billion_toman(numbers: pd.Series | pd.DataFrame) -> pd.Series | pd.DataFrame:
+    return (numbers/1e10).round(2).astype(str) + " B Toman"
 
-    read_data_from_file = False
 
-    # get market data
-    if read_data_from_file:
-        entire_option_market_data = pd.read_csv("entire_option_market_data.csv")
-    else:
-        entire_option_market_data = fetch_cleaned_entire_market_data()
-        entire_option_market_data.to_csv(path_or_buf="entire_option_market_data.csv", index=False)
-
-    # screen the market
-    option_market = OptionMarket(entire_option_market_data=entire_option_market_data)
-
-    pprint(f"total_trade_value: {option_market.total_trade_value / 1e10:.0f} BT")
-    pprint(option_market.extreme_changes_in_open_positions)
-
-    pprint(option_market.most_trade_value)
-    pprint(option_market.most_trade_value_by_underlying_asset, sort_dicts=False)
