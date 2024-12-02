@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, TypeAlias
 
 
 class NegotiateResponse(TypedDict):
@@ -83,7 +83,7 @@ class Type1Data(TypedDict):
     ModifyTime: str
 
 
-class Type2Data(TypedDict):
+class CDCData(TypedDict):
     ContractID: int
     ContractCode: str
     ContractDescription: str
@@ -155,6 +155,84 @@ class Type2Data(TypedDict):
     IsTradesHighLight: bool
 
 
+class FutureData(TypedDict):
+    ContractID: int
+    LastTradingDate: str
+    ContractCode: str
+    ContractDescription: str
+    ContractSize: float
+    ContractSizeUnitFaDesc: str
+    ContractSizeUnitEnDesc: str
+    ContractCurrencyFaDesc: str
+    ContractCurrencyEnDesc: str
+    ContractCurrencyDecimalPlaces: int | None
+    LastSettlementPrice: float
+    LastSettlementPriceDate: str
+    YesterdayOpenInterests: float | None
+    BidTotalVolume: int
+    BidVolume1: int
+    BidPrice1: float
+    BidVolume2: int
+    BidPrice2: float
+    BidVolume3: int
+    BidPrice3: float
+    BidVolume4: int
+    BidPrice4: float
+    BidVolume5: int
+    BidPrice5: float
+    AskTotalVolume: int
+    AskVolume1: int
+    AskPrice1: float
+    AskVolume2: int
+    AskPrice2: float
+    AskVolume3: int
+    AskPrice3: float
+    AskVolume4: int
+    AskPrice4: float
+    AskVolume5: int
+    AskPrice5: float
+    OrdersDateTime: str
+    FirstTradedPrice: float
+    FirstTradedPriceTime: str
+    FirstTradedPriceChanges: float
+    FirstTradedPriceChangesPercent: float
+    LastTradedPrice: float
+    LastTradedPriceTime: str
+    LastTradedPriceChanges: float
+    LastTradedPriceChangesPercent: float
+    HighTradedPrice: float
+    HighTradedPriceChanges: float
+    HighTradedPriceChangesPercent: float
+    LowTradedPrice: float
+    LowTradedPriceChanges: float
+    LowTradedPriceChangesPercent: float
+    AverageTradedPrice: float | None
+    OpeningPrice: float | None
+    ClosingPrice: float | None
+    TradesCount: int
+    TradesVolume: int
+    TradesValue: float
+    TradesValueCurrencyFaDesc: str
+    TradesValueCurrencyEnDesc: str
+    OpenInterests: int
+    OpenInterestsChanges: int
+    OpenInterestsChangesPercent: float
+    InitialMargin: float
+    MaintenanceMargin: float
+    LastUpdate: str
+    Expired: bool
+    LegalBuyerCount: int
+    LegalSellerCount: int
+    NaturalBuyerCount: int
+    NaturalSellerCount: int
+    TodayLiveSettlement: float
+    TradeCount: int
+    TradeVolume: int
+    PersianOrdersDateTime: str | None
+    PersianLastSettlementPriceDate: str | None
+    PesrsianLastTradingDate: str | None
+
+
 class AllMarketData(TypedDict):
     id: int
     Description: str
@@ -165,7 +243,6 @@ class AllMarketData(TypedDict):
     NaturalBuyerCount: int
     LegalSellerCount: int
     NaturalSellerCount: int
-
 
 
 class UpdateMarketInfo(TypedDict):
@@ -329,9 +406,7 @@ class UpdateMarketInfo(TypedDict):
     CallIsTradesHighLight: bool
 
 
-class Markets(TypedDict):
-    H: Literal["marketsHub"]
-    M: Literal[
+MarketNames: TypeAlias = Literal[
         "updateGavahiMarketsInfo",
         "updateSandoqMarketsInfo",
         "updateSalafMarketsInfo",
@@ -341,9 +416,14 @@ class Markets(TypedDict):
         "updateFutureMarketsInfo",
         "updateMarketsInfo",
     ]
-    A: list[
-        list[Type1Data | Type2Data | UpdateMarketInfo] | None | AllMarketData 
-    ]
+
+GeneralDataType: TypeAlias = list[Type1Data | CDCData | FutureData | UpdateMarketInfo] | None | AllMarketData
+
+
+class Markets(TypedDict):
+    H: Literal["marketsHub"]
+    M: MarketNames
+    A: list[GeneralDataType]
 
 
 class PollResponse(TypedDict):

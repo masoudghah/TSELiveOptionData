@@ -5,7 +5,7 @@ import pandas as pd
 import requests
 from fake_useragent import UserAgent
 
-from data_source.tsetmc import schema
+from tseopt.data_source.tsetmc import schema
 
 fake_user_agent = UserAgent()
 
@@ -57,7 +57,7 @@ def clean_entire_market_data(raw_data: list[schema.OptionData]) -> pd.DataFrame:
     return result_df
 
 
-def fetch_cleaned_entire_market_data() -> pd.DataFrame:
+def get_all_options_data() -> pd.DataFrame:
     """
     Fetch and clean the entire option market data.
 
@@ -96,7 +96,7 @@ def fetch_cleaned_entire_market_data() -> pd.DataFrame:
 
 if __name__ == "__main__":
     from pprint import pprint
-    data = fetch_cleaned_entire_market_data()
+    data = get_all_options_data()
     data.to_csv(path_or_buf="TSETMC_sample_data.csv", index=False)
     pprint(data.to_dict("records")[0])
 

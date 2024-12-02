@@ -1,7 +1,7 @@
 import pandas as pd
 import requests
 
-from data_source.tadbir import schema
+from tseopt.data_source.tadbir import schema
 
 
 class Tadbir:

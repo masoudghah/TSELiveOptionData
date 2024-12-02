@@ -2,8 +2,8 @@ import time
 
 import requests
 
-from data_source.mercantile_exchange import schema
-from data_source.mercantile_exchange.descriptor import Token
+from tseopt.data_source.mercantile_exchange import schema
+from tseopt.data_source.mercantile_exchange.descriptor import Token
 
 
 class MercantileExchangeAPI:
@@ -87,5 +87,71 @@ class MercantileExchange:
         return res.get("M")
 
 
-def make_a_mercantile_exchange_object() -> MercantileExchange:
-    return MercantileExchange(mercantile_exchange_api=_mercantile_exchange_api)
+class MercantileData:
+    def __init__(self, mercantile_exchange: MercantileExchange) -> None:
+        self._api = mercantile_exchange
+        self._data: list[schema.Markets] = []
+
+    def update_data(self, timeout: int = 20) -> None:
+        self._data = self._api.get_data(timeout=timeout)
+
+    def _get_specific_market(self, market_name: schema.MarketNames) -> schema.GeneralDataType:
+        if self._data == []:
+            raise ValueError("There is no data. Please ensure that you have updated the data using the update_data method.")
+        for record in self._data:
+            if record["M"] == market_name:
+                return record["A"][0]
+        else:
+            raise ValueError("Invalid market_name")
+
+    @property
+    def gavahi(self) -> list[schema.Type1Data]:
+        return self._get_specific_market("updateGavahiMarketsInfo")
+
+    @property
+    def sandoq(self) -> list[schema.Type1Data]:
+        return self._get_specific_market("updateSandoqMarketsInfo")
+
+    @property
+    def salaf(self) -> list[schema.Type1Data]:
+        return self._get_specific_market("updateSalafMarketsInfo")
+
+    @property
+    def cdc(self) -> list[schema.CDCData]:
+        return self._get_specific_market("updateCDCMarketsInfo")
+
+    @property
+    def all_market(self) -> schema.AllMarketData:
+        return self._get_specific_market("updateAllMarketData")
+
+    @property
+    def future_date_time(self) -> None:
+        return self._get_specific_market("updateFutureDateTime")
+
+    @property
+    def future(self) -> list[schema.FutureData]:
+        return self._get_specific_market("updateFutureMarketsInfo")
+
+    @property
+    def markets_info(self) -> list[schema.UpdateMarketInfo]:
+        return self._get_specific_market("updateMarketsInfo")
+
+
+def make_a_mercantile_data_object() -> MercantileData:
+    me = MercantileExchange(mercantile_exchange_api=_mercantile_exchange_api)
+    return MercantileData(me)
+
+
+if __name__ == "__main__":
+    md = make_a_mercantile_data_object()
+    md.update_data()
+    print(md.gavahi[0])
+    print(md.sandoq[0])
+    print(md.salaf[0])
+    print(md.cdc[0])
+    print(md.all_market)
+    print(md.future_date_time)
+    print(md.future[0])
+    print(md.markets_info[0])
+
+
