@@ -145,8 +145,10 @@ print(chains.underlying_asset_info.head(5))
 ua_tse_code = "17914401175772326" # اهرم
 
 # Option types can be "call", "put", or "both"
-strike_price_chain = chains.make_strike_price_chains(ua_tse_code=ua_tse_code, option_type="both")
-date_chain = chains.make_date_chains(ua_tse_code=ua_tse_code, option_type="call") 
+options = chains.options(ua_tse_code=ua_tse_code, option_type="both")
+date_chain = chains.make_date_chains(ua_tse_code=ua_tse_code, option_type="both") 
+strike_price_chain = chains.make_strike_price_chains(ua_tse_code=ua_tse_code, option_type="call")
+display(options)
 
 # strike_price_chain and date_chain are generators.
 # If you're not familiar with generators (and if you're wondering what the heck they are!), 
@@ -155,17 +157,16 @@ date_chain = chains.make_date_chains(ua_tse_code=ua_tse_code, option_type="call"
 # strike_price_chain = list(strike_price_chain)
 # date_chain = list(date_chain)
 
-
-for chain in strike_price_chain:
-    print("Strike Price: ", chain.loc[0, "strike_price"])
-    display(chain)
-    print("\n\n")
-
-
 for chain in date_chain:
     name = chain.loc[0, "name"]
     jalali_date = name.split("-")[2]
     print("Date: ", jalali_date)
+    display(chain)
+    print("\n\n")
+
+
+for chain in strike_price_chain:
+    print("Strike Price: ", chain.loc[0, "strike_price"])
     display(chain)
     print("\n\n")
 
