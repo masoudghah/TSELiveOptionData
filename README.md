@@ -130,6 +130,48 @@ print(most_trade_value_by_underlying_asset)
 
 ```
 
+
+### Options Chains
+
+```python
+from tseopt.use_case.options_chains import Chains
+
+chains = Chains(entire_option_market_data)
+
+# Display underlying asset information to help select ua_tse_codes
+print("Underlying Asset Information:")
+print(chains.underlying_asset_info.head(5))
+
+ua_tse_code = "17914401175772326" # اهرم
+
+# Option types can be "call", "put", or "both"
+strike_price_chain = chains.make_strike_price_chains(ua_tse_code=ua_tse_code, option_type="both")
+date_chain = chains.make_date_chains(ua_tse_code=ua_tse_code, option_type="call") 
+
+# strike_price_chain and date_chain are generators.
+# If you're not familiar with generators (and if you're wondering what the heck they are!), 
+# uncomment the lines below to convert them to lists
+
+# strike_price_chain = list(strike_price_chain)
+# date_chain = list(date_chain)
+
+
+for chain in strike_price_chain:
+    print("Strike Price: ", chain.loc[0, "strike_price"])
+    display(chain)
+    print("\n\n")
+
+
+for chain in date_chain:
+    name = chain.loc[0, "name"]
+    jalali_date = name.split("-")[2]
+    print("Date: ", jalali_date)
+    display(chain)
+    print("\n\n")
+
+
+```
+
 ### Tadbir API
 Provides low latency and more detailed data (such as initial margin and order book). This may be suitable for obtaining data for actual trading.
 ```python
