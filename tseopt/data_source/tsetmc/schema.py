@@ -16,6 +16,7 @@ class OptionData(TypedDict):
     priceYesterday_P: int
     oP_P: int
     pDrCotVal_P: int
+    pDrCotVal_UA: int
     lval30_UA: str
     pClosing_UA: int
     priceYesterday_UA: int
@@ -61,6 +62,7 @@ GENERAL_COLUMN_NAMES: dict[str, str] = {
     "strikePrice": "strike_price",
     "contractSize": "contract_size",
     "pClosing_UA": "ua_close_price",
+    "pDrCotVal_UA": "ua_last_price",
     "priceYesterday_UA": "ua_yesterday_price",
     "beginDate": "begin_date",
     "endDate": "end_date",
