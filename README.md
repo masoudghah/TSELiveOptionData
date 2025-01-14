@@ -173,6 +173,26 @@ for chain in strike_price_chain:
 
 ```
 
+
+### Historical Order Book
+
+```python
+from tseopt import fetch_historical_lob, take_lob_screenshot
+
+jalali_date = "1403-10-24"
+tse_code = "17091434834979599" # ضهرم1110
+
+all_lob = fetch_historical_lob(tse_code=tse_code, jalali_date=jalali_date)
+display(all_lob)
+
+
+specific_time = "10:50"
+lob = take_lob_screenshot(entire_data=all_lob, specific_time=specific_time)
+display(lob)
+
+
+```
+
 ### Tadbir API
 Provides low latency and more detailed data (such as initial margin and order book). This may be suitable for obtaining data for actual trading.
 ```python

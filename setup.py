@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='tseopt',
-    version='0.1.2',
+    version='0.1.3',
     packages=find_packages(),
     description=("This library contains code for fetching and processing option data from the Tehran Stock Exchange "
                  "using various public APIs."),
@@ -25,6 +25,7 @@ setup(
         'pandas==2.2.2',
         'requests==2.32.3',
         'fake-useragent==1.5.1',
+        'jdatetime==5.1.0',
     ],
     license='MIT',
     keywords='tse options tehran derivative',
