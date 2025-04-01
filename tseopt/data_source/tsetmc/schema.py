@@ -1,4 +1,5 @@
 from typing import TypedDict
+from enum import IntEnum
 
 
 class OptionData(TypedDict):
@@ -50,10 +51,11 @@ class OptionDataOutput(TypedDict):
     instrumentOptMarketWatch: list[OptionData]
 
 
-MARKETS_NUM: dict[str, int] = {
-    "bourse": 1,
-    "fara_bourse": 2
-}
+class MarketNum(IntEnum):
+    BOURSE = 1
+    FARA_BOURSE = 2
+    BOTH = 0
+
 
 GENERAL_COLUMN_NAMES: dict[str, str] = {
     "uaInsCode": "ua_tse_code",
@@ -86,3 +88,7 @@ SPECIFIC_COLUMN_NAMES: dict[str, str] = {
     'qTitMeOf': "ask_volume",
     'lVal30': "name",
 }
+
+
+if __name__ == "__main__":
+    pass

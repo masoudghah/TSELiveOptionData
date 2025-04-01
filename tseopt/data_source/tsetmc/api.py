@@ -1,6 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
-from typing import Literal
-
 import pandas as pd
 import requests
 from fake_useragent import UserAgent
@@ -10,16 +7,11 @@ from tseopt.data_source.tsetmc import schema
 fake_user_agent = UserAgent()
 
 
-def fetch_option_data(market: Literal["bourse", "fara_bourse"]) -> list[schema.OptionData]:
-    market_num = schema.MARKETS_NUM.get(market)
-
-    if market_num is None:
-        raise ValueError("Invalid market value. Expected 'bourse' or 'fara_bourse'.")
-
+def fetch_option_data(market_num: schema.MarketNum, timeout: float = 10) -> list[schema.OptionData]:
     url = f"https://cdn.tsetmc.com/api/Instrument/GetInstrumentOptionMarketWatch/{market_num}"
     headers = {'User-Agent': fake_user_agent.random}
     try:
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(url=url, headers=headers, timeout=timeout)
         response.raise_for_status()
         json_response: schema.OptionDataOutput = response.json()
         return json_response.get("instrumentOptMarketWatch")
@@ -28,11 +20,8 @@ def fetch_option_data(market: Literal["bourse", "fara_bourse"]) -> list[schema.O
         raise
 
 
-def fetch_entire_market_data() -> list[schema.OptionData]:
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        bourse_future = executor.submit(fetch_option_data, market="bourse")
-        fara_bourse_future = executor.submit(fetch_option_data, market="fara_bourse")
-    return bourse_future.result() + fara_bourse_future.result()
+def fetch_entire_market_data(timeout: float = 10) -> list[schema.OptionData]:
+    return fetch_option_data(schema.MarketNum.BOTH, timeout=timeout)
 
 
 def clean_entire_market_data(raw_data: list[schema.OptionData]) -> pd.DataFrame:
@@ -57,7 +46,7 @@ def clean_entire_market_data(raw_data: list[schema.OptionData]) -> pd.DataFrame:
     return result_df
 
 
-def get_all_options_data() -> pd.DataFrame:
+def get_all_options_data(timeout: float = 10) -> pd.DataFrame:
     """
     Fetch and clean the entire option market data.
 
@@ -90,15 +79,14 @@ def get_all_options_data() -> pd.DataFrame:
             - 'yesterday_open_positions': Number of open positions from the previous day.
             - 'option_type': Type of the option (e.g., call or put).
     """
-    raw_data = fetch_entire_market_data()
+    raw_data = fetch_entire_market_data(timeout)
     return clean_entire_market_data(raw_data)
 
 
 if __name__ == "__main__":
     from pprint import pprint
     data = get_all_options_data()
-    data.to_csv(path_or_buf="TSETMC_sample_data.csv", index=False)
+    # data.to_csv(path_or_buf="TSETMC_sample_data.csv", index=False)
     pprint(data.to_dict("records")[0])
-
-
+    pprint(len(data))
 
