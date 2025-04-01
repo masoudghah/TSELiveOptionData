@@ -1,6 +1,6 @@
 # tseopt
 
-This library contains code for fetching and processing option data from the Tehran Stock Exchange using various public APIs.
+`tseopt` is a Python library for fetching and processing option data from the Tehran Stock Exchange using various public APIs.
 
 ---
 ## Requirements
@@ -82,7 +82,7 @@ py -m pip install --upgrade pip setuptools wheel # Windows
 Use the package manager pip to install `tseopt`.
 
 ```bash
-pip install tseopt
+pip install --upgrade tseopt
 ```
 
 ## Usage
