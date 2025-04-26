@@ -1,4 +1,4 @@
-pandas==2.2.2
-requests==2.32.3
+pandas>=2.2.2
+requests>=2.32.3
 fake-useragent==1.5.1
 jdatetime==5.1.0
